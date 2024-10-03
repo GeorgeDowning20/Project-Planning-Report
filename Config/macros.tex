@@ -1,0 +1,75 @@
+\newcommand{\Q}{Q1} 
+
+\newenvironment{conditions}[1][where:]
+  {#1 \begin{tabular}[t]{>{$}l<{$} @{${}={}$} l}}
+  {\end{tabular}\\[\belowdisplayskip]}
+
+\makeatletter
+\renewcommand{\subsubsubsection}{\@startsection{paragraph}{4}{0ex}%
+   {-3.25ex plus -1ex minus -0.2ex}%
+   {1.5ex plus 0.2ex}%
+   {\normalfont\normalsize\bfseries}}
+\makeatother
+
+\stepcounter{secnumdepth}
+\stepcounter{tocdepth}
+
+
+\makeatletter
+% Save the original \section command
+\let\oldsection\section
+% Redefine the \section command to handle both optional arguments and the star variant
+\renewcommand{\section}{\@ifstar{\mysectionstar}{\@ifnextchar[{\mysectionopt}{\mysection}}}
+% Define the version of \section with a star (unnumbered)
+\newcommand{\mysectionstar}[1]{%
+  \def\currentsec{#1}% Update to use a more specific variable name
+  \oldsection*{#1}%
+}
+% Define the version of \section with an optional argument
+\newcommand{\mysectionopt}[2][]{%
+  \def\currentsec{#2}% Update to use a more specific variable name
+  \oldsection[#1]{#2}%
+}
+% Define the version of \section without an optional argument
+\newcommand{\mysection}[1]{%
+  \def\currentsec{#1}% Update to use a more specific variable name
+  \oldsection{#1}%
+}
+
+% Assuming similar functionality is desired for \subsection,
+% you would follow a similar pattern:
+\let\oldsubsection\subsection
+\renewcommand{\subsection}{\@ifstar{\mysubsectionstar}{\@ifnextchar[{\mysubsectionopt}{\mysubsection}}}
+\newcommand{\mysubsectionstar}[1]{%
+  \def\currentsubsec{#1}% Update to use a more specific variable name
+  \oldsubsection*{#1}%
+}
+\newcommand{\mysubsectionopt}[2][]{%
+  \def\currentsubsec{#2}% Update to use a more specific variable name
+  \oldsubsection[#1]{#2}%
+}
+\newcommand{\mysubsection}[1]{%
+  \def\currentsubsec{#1}% Update to use a more specific variable name
+  \oldsubsection{#1}%
+}
+\makeatother
+
+\newcommand{\inputsubsection}[1]{%
+  \subsection{#1}%
+  \input{Src/\currentsec/\currentsubsec/main.tex}%
+}
+
+\newcommand{\inputsubsubsection}[1]{%
+  \subsubsection{#1}%
+  \input{Src/\currentsec/\currentsubsec/#1.tex}%
+}
+
+\newcommand{\Diagram}[2]{%
+  \begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Src/\currentsec/\currentsubsec/#1}
+    \caption{#2}
+    \label{fig:#1}
+  \end{figure}
+  \FloatBarrier
+}
